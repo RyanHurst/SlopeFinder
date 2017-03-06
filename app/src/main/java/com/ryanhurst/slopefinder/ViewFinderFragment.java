@@ -1,6 +1,5 @@
 package com.ryanhurst.slopefinder;
 
-
 import android.Manifest;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
@@ -14,7 +13,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,6 +34,8 @@ public class ViewFinderFragment extends Fragment implements SensorEventListener 
     public static final String TAG = "ViewFinderFragment";
 
     private static final int PERMISSION_REQUEST_CAMERA = 46;
+
+    private boolean permissionDenied;
 
     @BindView(R.id.view_finder_text)
     TextView viewFinderText;
@@ -60,6 +60,8 @@ public class ViewFinderFragment extends Fragment implements SensorEventListener 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        permissionDenied = false;
 
         //keep screen on
         getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -87,35 +89,35 @@ public class ViewFinderFragment extends Fragment implements SensorEventListener 
     public void onResume() {
         super.onResume();
 
-        Log.d(TAG, "resumed");
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA)
                 == PackageManager.PERMISSION_GRANTED) {
             cameraView.start();
-            Log.d(TAG, "camera started");
-        } else if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
-                Manifest.permission.CAMERA)) {
-            // 1. Instantiate an AlertDialog.Builder with its constructor
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        } else if (!permissionDenied) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
+                    Manifest.permission.CAMERA)) {
+                // 1. Instantiate an AlertDialog.Builder with its constructor
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
-            // 2. Chain together various setter methods to set the dialog characteristics
-            builder.setMessage(R.string.dialog_message)
-                    .setTitle(R.string.dialog_title)
-                    .setNeutralButton(R.string.ok, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CAMERA},
-                                    PERMISSION_REQUEST_CAMERA);
-                        }
-                    })
-                    .setNegativeButton(R.string.cancel, null)
-                    .setCancelable(false);
+                // 2. Chain together various setter methods to set the dialog characteristics
+                builder.setMessage(R.string.dialog_message)
+                        .setTitle(R.string.dialog_title)
+                        .setNeutralButton(R.string.ok, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                requestPermissions(new String[]{Manifest.permission.CAMERA},
+                                        PERMISSION_REQUEST_CAMERA);
+                            }
+                        })
+                        .setNegativeButton(R.string.cancel, null)
+                        .setCancelable(false);
 
-            // 3. Get the AlertDialog from create()
-            AlertDialog dialog = builder.create();
-            dialog.show();
-        } else {
-            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CAMERA},
-                    PERMISSION_REQUEST_CAMERA);
+                // 3. Get the AlertDialog from create()
+                AlertDialog dialog = builder.create();
+                dialog.show();
+            } else {
+                requestPermissions(new String[]{Manifest.permission.CAMERA},
+                        PERMISSION_REQUEST_CAMERA);
+            }
         }
     }
 
@@ -135,7 +137,7 @@ public class ViewFinderFragment extends Fragment implements SensorEventListener 
                     throw new RuntimeException("Error on requesting camera permission.");
                 }
                 if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-                    Log.d(TAG, "permission not granted");
+                    permissionDenied = true;
                 }
                 // No need to start camera here; it is handled by onResume
                 break;

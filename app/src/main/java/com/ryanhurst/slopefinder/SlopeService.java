@@ -15,10 +15,6 @@ import android.util.Log;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 
-import static android.hardware.SensorManager.SENSOR_STATUS_ACCURACY_HIGH;
-import static android.hardware.SensorManager.SENSOR_STATUS_ACCURACY_LOW;
-import static android.hardware.SensorManager.SENSOR_STATUS_ACCURACY_MEDIUM;
-import static android.hardware.SensorManager.SENSOR_STATUS_UNRELIABLE;
 import static java.lang.Math.abs;
 import static java.lang.Math.acos;
 import static java.lang.Math.sqrt;
@@ -68,14 +64,14 @@ public class SlopeService extends Service {
         mSensorManager.registerListener(sensorEventListener, rotationSensor, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
-    public class LocalBinder extends Binder {
+    class LocalBinder extends Binder {
         SlopeService getService() {
             return SlopeService.this;
         }
     }
 
     public static String formatAngle(double angle) {
-        DecimalFormat df = new DecimalFormat("#.##");
+        DecimalFormat df = new DecimalFormat("#.#");
         df.setRoundingMode(RoundingMode.HALF_UP);
         return df.format(angle) + (char) 0x00B0;
     }
@@ -83,18 +79,21 @@ public class SlopeService extends Service {
     public static double getAngleFromSensorEvent(SensorEvent sensorEvent) {
         float[] data = sensorEvent.values;
 
-        //first represent quaternion as a matrix;
+        //represent quaternion as a matrix;
         Quart q = new Quart(data[3], data[0], data[1], data[2]);
 
-        float x1 = 0;
-        float y1 = 0;
-        float z1 = 1;
+        Vector xyNormalVector = new Vector(0, 0, 1);
 
-        Quart p = new Quart(0, x1, y1, z1);
+        //represent vector as a quaternion with 0 as the real value
+        Quart p = new Quart(0, xyNormalVector.x, xyNormalVector.y, xyNormalVector.z);
 
-
-        //then perform quaternion rotation on vertical vector
-        //p' = qpq^-1
+        // perform quaternion rotation on xyNormalVector
+        // where
+        // p = xyNormalVector
+        // p' = deviceVector
+        //
+        // https://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation#The_conjugation_operation
+        // p' = qpq^-1
 
         float[] qp = new float[16];
 
@@ -107,16 +106,44 @@ public class SlopeService extends Service {
         float[] qpqInv = new float[16];
         Matrix.multiplyMM(qpqInv, 0, qp, 0, qInverse, 0);
 
-        double x2 = qpqInv[1];
-        double y2 = qpqInv[2];
-        double z2 = qpqInv[3];
+        Vector deviceVector = new Vector(qpqInv[1], qpqInv[2], qpqInv[3]);
 
-        //finally measure angle between vertical vector and the new vector
-        double radians = acos(abs(x1 * x2 + y1 * y2 + z1 * z2)/(sqrt(x1 * x1 + y1 * y1 + z1 * z1) * sqrt(x2 * x2 + y2 * y2 + z2 * z2)));
+        //measure angle between vertical vector and the new vector
+        double radians = measureAngleBetweenTwoVectors(xyNormalVector, deviceVector);
 
         return toDegrees(radians);
     }
 
+    /**
+     * measure the acute angle between two vectors
+     *
+     * http://www.vitutor.com/geometry/distance/angle_planes.html
+     * @return radians
+     */
+    private static double measureAngleBetweenTwoVectors(Vector v1, Vector v2) {
+        return acos(
+                abs(v1.x * v2.x + v1.y * v2.y + v1.z * v2.z)/
+                (sqrt(v1.x * v1.x + v1.y * v1.y + v1.z * v1.z) * sqrt(v2.x * v2.x + v2.y * v2.y + v2.z * v2.z))
+        );
+    }
+
+
+    /**
+     * mathematical vector object
+     */
+    private static class Vector {
+        float x, y, z;
+        Vector(float x,  float y, float z) {
+            this.x = x;
+            this.y = y;
+            this.z = z;
+        }
+    }
+
+    /**
+     * class to represent a Quaternion as a matrix
+     *         //https://en.wikipedia.org/wiki/Quaternion
+     */
     private static class Quart {
         float a, b, c, d;
         float[] matrix;

@@ -18,7 +18,7 @@
         android:textSize="45sp"
         android:textColor="@android:color/white"
         android:background="@color/darkTransparent"
-        tools:text="40" />
+        android:text="@string/no_data_found" />
 
     <View
         android:layout_height="1dp"
