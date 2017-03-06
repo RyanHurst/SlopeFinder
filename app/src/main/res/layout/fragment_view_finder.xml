@@ -4,12 +4,32 @@
     android:layout_height="match_parent"
     tools:context="com.ryanhurst.slopefinder.ViewFinderFragment">
 
-    <TextView
-        android:id="@+id/view_finder_text"
+    <com.google.android.cameraview.CameraView
+        android:id="@+id/camera_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:adjustViewBounds="true"/>
+
+    <TextView
+        android:id="@+id/view_finder_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:padding="6dp"
         android:textSize="45sp"
+        android:textColor="@android:color/white"
+        android:background="@color/darkTransparent"
         tools:text="40" />
+
+    <View
+        android:layout_height="1dp"
+        android:layout_width="match_parent"
+        android:background="@android:color/black"
+        android:layout_gravity="center_vertical"/>
+
+    <View
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
+        android:background="@android:color/black"
+        android:layout_gravity="center_horizontal"/>
 
 </FrameLayout>

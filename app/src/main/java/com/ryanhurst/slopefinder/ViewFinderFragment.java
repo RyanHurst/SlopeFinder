@@ -1,18 +1,27 @@
 package com.ryanhurst.slopefinder;
 
 
+import android.Manifest;
+import android.content.DialogInterface;
+import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.TextView;
+
+import com.google.android.cameraview.CameraView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -26,8 +35,13 @@ public class ViewFinderFragment extends Fragment implements SensorEventListener 
 
     public static final String TAG = "ViewFinderFragment";
 
+    private static final int PERMISSION_REQUEST_CAMERA = 46;
+
     @BindView(R.id.view_finder_text)
     TextView viewFinderText;
+
+    @BindView(R.id.camera_view)
+    CameraView cameraView;
 
     public ViewFinderFragment() {
         // Required empty public constructor
@@ -64,13 +78,73 @@ public class ViewFinderFragment extends Fragment implements SensorEventListener 
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_view_finder, container, false);
         ButterKnife.bind(this, view);
+
+        cameraView.setFacing(CameraView.FACING_BACK);
         return view;
     }
 
     @Override
-    public void onSensorChanged(SensorEvent sensorEvent) {
-        Log.d(TAG, "event");
+    public void onResume() {
+        super.onResume();
 
+        Log.d(TAG, "resumed");
+        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA)
+                == PackageManager.PERMISSION_GRANTED) {
+            cameraView.start();
+            Log.d(TAG, "camera started");
+        } else if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
+                Manifest.permission.CAMERA)) {
+            // 1. Instantiate an AlertDialog.Builder with its constructor
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+            // 2. Chain together various setter methods to set the dialog characteristics
+            builder.setMessage(R.string.dialog_message)
+                    .setTitle(R.string.dialog_title)
+                    .setNeutralButton(R.string.ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CAMERA},
+                                    PERMISSION_REQUEST_CAMERA);
+                        }
+                    })
+                    .setNegativeButton(R.string.cancel, null)
+                    .setCancelable(false);
+
+            // 3. Get the AlertDialog from create()
+            AlertDialog dialog = builder.create();
+            dialog.show();
+        } else {
+            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CAMERA},
+                    PERMISSION_REQUEST_CAMERA);
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        cameraView.stop();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        switch (requestCode) {
+            case PERMISSION_REQUEST_CAMERA: {
+                if (permissions.length != 1 || grantResults.length != 1) {
+                    throw new RuntimeException("Error on requesting camera permission.");
+                }
+                if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                    Log.d(TAG, "permission not granted");
+                }
+                // No need to start camera here; it is handled by onResume
+                break;
+            }
+        }
+    }
+
+    @Override
+    public void onSensorChanged(SensorEvent sensorEvent) {
         double angle = SlopeService.getAngleFromSensorEvent(sensorEvent);
 
         angle = 90 - angle;
@@ -82,4 +156,5 @@ public class ViewFinderFragment extends Fragment implements SensorEventListener 
     public void onAccuracyChanged(Sensor sensor, int i) {
 
     }
+
 }

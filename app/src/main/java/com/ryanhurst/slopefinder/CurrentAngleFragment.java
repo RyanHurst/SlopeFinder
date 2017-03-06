@@ -67,7 +67,6 @@ public class CurrentAngleFragment extends Fragment implements SensorEventListene
 
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
-        Log.d(TAG, "event");
         double angle = SlopeService.getAngleFromSensorEvent(sensorEvent);
 
         currentAngleText.setText(SlopeService.formatAngle(angle));
