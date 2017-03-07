@@ -5,4 +5,5 @@
     <color name="colorAccent">#FF4081</color>
 
     <color name="darkTransparent">#80000000</color>
+    <color name="lightTransparent">#88888888</color>
 </resources>

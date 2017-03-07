@@ -5,7 +5,7 @@
     android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/current_angle_text"
+        android:id="@+id/surface_angle_text"
         android:gravity="center"
         android:textSize="45sp"
         android:text="@string/no_data_found"

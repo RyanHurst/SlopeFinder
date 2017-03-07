@@ -20,13 +20,13 @@ import butterknife.ButterKnife;
  * fragment to determine slope of surface that device is resting on
  */
 
-public class CurrentAngleFragment extends Fragment implements SensorEventListener {
-    public static final String TAG = "CurrentAngleFragment";
+public class SurfaceAngleFragment extends Fragment implements SensorEventListener {
+    public static final String TAG = "SurfaceAngleFragment";
 
-    @BindView(R.id.current_angle_text)
-    TextView currentAngleText;
+    @BindView(R.id.surface_angle_text)
+    TextView surfaceAngleText;
 
-    public CurrentAngleFragment() {
+    public SurfaceAngleFragment() {
         // Required empty public constructor
     }
 
@@ -34,10 +34,10 @@ public class CurrentAngleFragment extends Fragment implements SensorEventListene
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @return A new instance of fragment CurrentAngleFragment.
+     * @return A new instance of fragment SurfaceAngleFragment.
      */
-    public static CurrentAngleFragment newInstance() {
-        return new CurrentAngleFragment();
+    public static SurfaceAngleFragment newInstance() {
+        return new SurfaceAngleFragment();
     }
 
     @Override
@@ -68,7 +68,7 @@ public class CurrentAngleFragment extends Fragment implements SensorEventListene
     public void onSensorChanged(SensorEvent sensorEvent) {
         double angle = SlopeService.getAngleFromSensorEvent(sensorEvent);
 
-        currentAngleText.setText(SlopeService.formatAngle(angle));
+        surfaceAngleText.setText(SlopeService.formatAngle(angle));
     }
 
     @Override

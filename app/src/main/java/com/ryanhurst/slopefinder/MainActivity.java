@@ -9,9 +9,15 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.MenuItem;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 import static android.hardware.SensorManager.SENSOR_STATUS_ACCURACY_HIGH;
 import static android.hardware.SensorManager.SENSOR_STATUS_ACCURACY_LOW;
@@ -19,22 +25,47 @@ import static android.hardware.SensorManager.SENSOR_STATUS_ACCURACY_MEDIUM;
 import static android.hardware.SensorManager.SENSOR_STATUS_UNRELIABLE;
 
 
-public class MainActivity extends AppCompatActivity implements ServiceConnection,
-        DashboardFragment.OnFragmentInteractionListener, SensorEventListener {
+public class MainActivity extends AppCompatActivity implements ServiceConnection, SensorEventListener {
 
     public static final String TAG = "MainActivity";
 
     SlopeService.LocalBinder binder;
     SensorEventListener fragmentListener;
 
+    @BindView(R.id.navigation)
+    BottomNavigationView bottomNavigationView;
+
+    private boolean isCameraView = false;
+
+    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
+            = new BottomNavigationView.OnNavigationItemSelectedListener() {
+
+        @Override
+        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.navigation_surface_angle:
+                    if(isCameraView)
+                        surfaceAngleSelected();
+                    break;
+                case R.id.navigation_camera_finder:
+                    if(!isCameraView)
+                        cameraFinderSelected();
+                    break;
+            }
+            return true;
+        }
+
+    };
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
+        bottomNavigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+
         if(savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.fragment_container, DashboardFragment.newInstance(), DashboardFragment.TAG)
-                    .commitAllowingStateLoss();
+            surfaceAngleSelected();
         }
     }
 
@@ -70,19 +101,17 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
         Log.w(TAG, "service disconnected");
     }
 
-    @Override
-    public void currentAngleSelected() {
+    public void surfaceAngleSelected() {
+        isCameraView = false;
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragment_container, CurrentAngleFragment.newInstance(), CurrentAngleFragment.TAG)
-                .addToBackStack(null)
+                .replace(R.id.fragment_container, SurfaceAngleFragment.newInstance(), SurfaceAngleFragment.TAG)
                 .commitAllowingStateLoss();
     }
 
-    @Override
     public void cameraFinderSelected() {
+        isCameraView = true;
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container, ViewFinderFragment.newInstance(), ViewFinderFragment.TAG)
-                .addToBackStack(null)
                 .commitAllowingStateLoss();
     }
 
@@ -91,6 +120,14 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
         if(fragmentListener != null) {
             fragmentListener.onSensorChanged(sensorEvent);
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(isCameraView)
+            surfaceAngleSelected();
+        else
+            super.onBackPressed();
     }
 
     @Override

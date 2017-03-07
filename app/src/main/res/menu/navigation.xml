@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_surface_angle"
+        android:icon="@drawable/ic_surface_black_24dp"
+        android:title="@string/surface_angle" />
+
+    <item
+        android:id="@+id/navigation_camera_finder"
+        android:icon="@drawable/ic_camera_alt_black_24dp"
+        android:title="@string/camera_finder" />
+
+</menu>
