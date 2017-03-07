@@ -61,7 +61,9 @@ public class SlopeService extends Service {
             mSensorManager.unregisterListener(this.sensorEventListener);
         }
         this.sensorEventListener = sensorEventListener;
-        mSensorManager.registerListener(sensorEventListener, rotationSensor, SensorManager.SENSOR_DELAY_NORMAL);
+
+        //can change to SENSOR_DELAY_NORMAL for better battery life
+        mSensorManager.registerListener(sensorEventListener, rotationSensor, SensorManager.SENSOR_DELAY_UI);
     }
 
     class LocalBinder extends Binder {
