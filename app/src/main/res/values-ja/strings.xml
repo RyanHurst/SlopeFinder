@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">IRL Slope Finder</string>
+    <string name="camera_finder">カメラ</string>
+    <string name="cancel">キャンセル</string>
+    <string name="dialog_message">これにより、カメラをビューファインダーとして使用して正確な勾配測定値を得ることができます</string>
+    <string name="dialog_title">SlopeFinderがあなたのデバイスのカメラを使用できるようにしますか？</string>
+    <string name="no_data_found">何もデータが見つかりませんでした</string>
+    <string name="ok">OK</string>
+    <string name="surface_angle">表面</string>
+</resources>

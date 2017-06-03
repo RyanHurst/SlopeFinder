@@ -1,8 +1,8 @@
 <resources>
-    <string name="app_name">SlopeFinder</string>
+    <string name="app_name">IRL Slope Finder</string>
 
-    <string name="camera_finder">Camera Finder</string>
-    <string name="surface_angle">Surface Angle</string>
+    <string name="camera_finder">Camera</string>
+    <string name="surface_angle">Surface</string>
 
     <string name="dialog_title">Allow SlopeFinder to use your device\'s camera?</string>
     <string name="dialog_message">This allows you to use your camera as a viewfinder to get accurate slope measurements</string>

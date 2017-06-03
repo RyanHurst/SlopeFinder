@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">IRL Slope Finder</string>
+    <string name="camera_finder">поверхность</string>
+    <string name="cancel">Отмена</string>
+    <string name="dialog_message">Это позволяет использовать вашу камеру в качестве видоискателя для получения точных измерений наклона</string>
+    <string name="dialog_title">Разрешить SlopeFinder использовать камеру вашего устройства?</string>
+    <string name="no_data_found">Данные не найдены</string>
+    <string name="ok">ОК</string>
+    <string name="surface_angle">поверхность</string>
+</resources>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">IRL Slope Finder</string>
+    <string name="surface_angle">표면</string>
+    <string name="ok">승인</string>
+    <string name="no_data_found">데이터가 없습니다</string>
+    <string name="dialog_title">SlopeFinder가 기기의 카메라를 사용하도록 허용 하시겠습니까?</string>
+    <string name="dialog_message">카메라를 뷰 파인더로 사용하여 정확한 경사 측정을 할 수 있습니다.</string>
+    <string name="cancel">취소</string>
+    <string name="camera_finder">카메라</string>
+</resources>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">IRL Slope Finder</string>
+    <string name="ok">OK</string>
+    <string name="camera_finder">Caméra</string>
+    <string name="cancel">Annuler</string>
+    <string name="dialog_message">Cela vous permet d\'utiliser votre caméra comme viseur pour obtenir des mesures précises de la pente</string>
+    <string name="dialog_title">Autoriser SlopeFinder à utiliser la caméra de votre appareil?</string>
+    <string name="no_data_found">Aucune donnée disponible</string>
+    <string name="surface_angle">Surface</string>
+</resources>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">IRL Slope Finder</string>
+    <string name="surface_angle">表面</string>
+    <string name="ok">好</string>
+    <string name="no_data_found">没有找到数据</string>
+    <string name="dialog_title">允许SlopeFinder使用您的设备的相机？</string>
+    <string name="dialog_message">这样您可以将相机用作取景器，以获得准确的斜率测量</string>
+    <string name="cancel">取消</string>
+    <string name="camera_finder">相机</string>
+</resources>

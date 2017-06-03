@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">IRL Slope Finder</string>
+    <string name="ok">OK</string>
+    <string name="surface_angle">Superficie</string>
+    <string name="no_data_found">Nessun dato trovato</string>
+    <string name="dialog_title">Consentire a SlopeFinder di utilizzare la fotocamera del tuo dispositivo?</string>
+    <string name="dialog_message">Ciò consente di utilizzare la fotocamera come mirino per ottenere misure accurate del pendio</string>
+    <string name="cancel">Annulla</string>
+    <string name="camera_finder">Macchina fotografica</string>
+</resources>
