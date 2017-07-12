@@ -124,10 +124,11 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
 
     @Override
     public void onBackPressed() {
-        if(isCameraView)
-            surfaceAngleSelected();
-        else
+        if(isCameraView) {
+            bottomNavigationView.setSelectedItemId(R.id.navigation_surface_angle);
+        } else {
             super.onBackPressed();
+        }
     }
 
     @Override
