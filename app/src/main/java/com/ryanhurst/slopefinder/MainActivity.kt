@@ -19,8 +19,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 private const val TAG = "MainActivity"
 
-class MainActivity : AppCompatActivity(), ServiceConnection, SensorEventListener {
-    private var serviceBinder: LocalBinder? = null
+class MainActivity : AppCompatActivity(R.layout.activity_main), ServiceConnection, SensorEventListener {
     private var fragmentListener: SensorEventListener? = null
     private var isCameraView = false
     private val mOnNavigationItemSelectedListener = OnNavigationItemSelectedListener { item ->
@@ -33,21 +32,19 @@ class MainActivity : AppCompatActivity(), ServiceConnection, SensorEventListener
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
         if (savedInstanceState == null) {
             surfaceAngleSelected()
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        val intent = Intent(this, SlopeService::class.java)
-        bindService(intent, this, Context.BIND_AUTO_CREATE)
+    override fun onStart() {
+        super.onStart()
+        bindService(Intent(this, SlopeService::class.java), this, Context.BIND_AUTO_CREATE)
     }
 
-    override fun onPause() {
-        super.onPause()
+    override fun onStop() {
+        super.onStop()
         unbindService(this)
     }
 
@@ -59,8 +56,7 @@ class MainActivity : AppCompatActivity(), ServiceConnection, SensorEventListener
     }
 
     override fun onServiceConnected(componentName: ComponentName, iBinder: IBinder) {
-        serviceBinder = iBinder as LocalBinder
-        serviceBinder!!.service.registerListener(this)
+        (iBinder as LocalBinder).service.registerListener(this)
     }
 
     override fun onServiceDisconnected(componentName: ComponentName) {
@@ -78,9 +74,7 @@ class MainActivity : AppCompatActivity(), ServiceConnection, SensorEventListener
     }
 
     override fun onSensorChanged(sensorEvent: SensorEvent) {
-        if (fragmentListener != null) {
-            fragmentListener!!.onSensorChanged(sensorEvent)
-        }
+        fragmentListener?.onSensorChanged(sensorEvent)
     }
 
     override fun onBackPressed() {
@@ -92,9 +86,7 @@ class MainActivity : AppCompatActivity(), ServiceConnection, SensorEventListener
     }
 
     override fun onAccuracyChanged(sensor: Sensor, i: Int) {
-        if (fragmentListener != null) {
-            fragmentListener!!.onAccuracyChanged(sensor, i)
-        }
+        fragmentListener?.onAccuracyChanged(sensor, i)
         when (i) {
           SensorManager.SENSOR_STATUS_ACCURACY_LOW -> Log.d(TAG, "low accuracy for sensor: " + sensor.name)
           SensorManager.SENSOR_STATUS_ACCURACY_HIGH -> Log.d(TAG, "high accuracy for sensor: " + sensor.name)
