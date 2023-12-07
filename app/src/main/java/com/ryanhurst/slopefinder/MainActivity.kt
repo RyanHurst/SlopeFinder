@@ -15,11 +15,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView.OnNavigationItemSelectedListener
 import com.ryanhurst.slopefinder.SlopeService.LocalBinder
-import kotlinx.android.synthetic.main.activity_main.*
+import com.ryanhurst.slopefinder.databinding.ActivityMainBinding
 
 private const val TAG = "MainActivity"
 
-class MainActivity : AppCompatActivity(R.layout.activity_main), ServiceConnection, SensorEventListener {
+class MainActivity : AppCompatActivity(), ServiceConnection, SensorEventListener {
     private var fragmentListener: SensorEventListener? = null
     private var isCameraView = false
     private val mOnNavigationItemSelectedListener = OnNavigationItemSelectedListener { item ->
@@ -29,10 +29,13 @@ class MainActivity : AppCompatActivity(R.layout.activity_main), ServiceConnectio
         }
         true
     }
+    private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        binding.navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
         if (savedInstanceState == null) {
             surfaceAngleSelected()
         }
@@ -79,7 +82,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main), ServiceConnectio
 
     override fun onBackPressed() {
         if (isCameraView) {
-            navigation.selectedItemId = R.id.navigation_surface_angle
+            binding.navigation.selectedItemId = R.id.navigation_surface_angle
         } else {
             super.onBackPressed()
         }

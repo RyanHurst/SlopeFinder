@@ -5,7 +5,11 @@ import android.content.pm.PackageManager
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
+import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog.Builder
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.Preview
@@ -13,7 +17,7 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import kotlinx.android.synthetic.main.fragment_view_finder.*
+import com.ryanhurst.slopefinder.databinding.FragmentViewFinderBinding
 
 private const val TAG = "ViewFinderFragment"
 private const val PERMISSION_REQUEST_CAMERA = 46
@@ -22,8 +26,18 @@ private const val PERMISSION_REQUEST_CAMERA = 46
  * Created by Ryan on 3/6/2017.
  * fragment to determine slope of line from current position to where the camera is pointing
  */
-class ViewFinderFragment : Fragment(R.layout.fragment_view_finder), SensorEventListener {
+class ViewFinderFragment : Fragment(), SensorEventListener {
     private var permissionDenied = false
+    private lateinit var binding: FragmentViewFinderBinding
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        binding = FragmentViewFinderBinding.inflate(layoutInflater)
+        return binding.root
+    }
 
     override fun onResume() {
         super.onResume()
@@ -50,7 +64,7 @@ class ViewFinderFragment : Fragment(R.layout.fragment_view_finder), SensorEventL
         cameraProviderFuture.addListener({
           val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
           val preview = Preview.Builder().build().also {
-            it.setSurfaceProvider(viewFinder.surfaceProvider)
+            it.setSurfaceProvider(binding.viewFinder.surfaceProvider)
           }
           try {
             cameraProvider.unbindAll()
@@ -78,7 +92,7 @@ class ViewFinderFragment : Fragment(R.layout.fragment_view_finder), SensorEventL
     override fun onSensorChanged(sensorEvent: SensorEvent) {
         var angle = SlopeService.getAngleFromSensorEvent(sensorEvent)
         angle = 90 - angle
-        view_finder_text.text = SlopeService.formatAngle(angle)
+        binding.viewFinderText.text = SlopeService.formatAngle(angle)
     }
 
     override fun onAccuracyChanged(sensor: Sensor, i: Int) {}
